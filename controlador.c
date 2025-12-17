@@ -182,44 +182,6 @@ void processaCancelamentoCliente(ControladorData *dados, PedidoCliente *p) {
 }
 
 // Thread Leitura Telemetria
-/*
-void *trataVeiculo(void *arg) {
-    ArgsTelemetria *args = (ArgsTelemetria *)arg;
-    char buf[256];
-    int perc;
-    FILE *fp = fdopen(args->fd, "r");
-    
-    while(fgets(buf, sizeof(buf), fp)) {
-        // printf("[TELEMETRIA V%d] %s", args->dados->viagens[args->index_viagem].id, buf);
-        if (sscanf(buf, "%*d PERCENTAGEM %d", &perc) == 1) {
-            pthread_mutex_lock(&args->dados->mutex);
-            args->dados->viagens[args->index_viagem].percentagem_atual = perc;
-            pthread_mutex_unlock(&args->dados->mutex);
-        }
-
-        if (strstr(buf, "CONCLUIDO") != NULL) {
-            pthread_mutex_lock(&args->dados->mutex);
-            args->dados->viagens[args->index_viagem].status = 2;
-            args->dados->veiculos_ativos--; 
-            
-            args->dados->total_kms_frota += args->dados->viagens[args->index_viagem].distancia;
-            
-            printf("Viagem %d concluída. KMs acumulados: %lld\n", 
-                   args->dados->viagens[args->index_viagem].id, args->dados->total_kms_frota);
-            pthread_mutex_unlock(&args->dados->mutex);
-        }
-        else if (strstr(buf, "CANCELADO") != NULL || strstr(buf, "ERRO") != NULL) {
-            pthread_mutex_lock(&args->dados->mutex);
-            args->dados->viagens[args->index_viagem].status = -1;
-            args->dados->veiculos_ativos--; 
-            pthread_mutex_unlock(&args->dados->mutex);
-        }
-    }
-    fclose(fp);
-    free(args);
-    return NULL;
-}
-*/
 void *trataVeiculo(void *arg) {
     ArgsTelemetria *args = (ArgsTelemetria *)arg;
     char buf[256];
