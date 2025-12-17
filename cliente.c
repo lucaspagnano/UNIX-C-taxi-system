@@ -25,7 +25,7 @@ void *escutaServidor(void *arg) {
         if (n == sizeof(RespostaServidor)) {
             printf("%s\n", resp.mensagem);
             fflush(stdout); // forcar printf a aparecer no ecra 
-            if (strstr(resp.mensagem, "SHUTDOWN") != NULL) { // 
+            if (strstr(resp.mensagem, "SHUTDOWN") != NULL) { // procura keyword SHUTDOWN e encerra tudo 
                 printf("Ordem de encerramento recebida.\n");
                 if (server_fifo_fd != -1) close(server_fifo_fd);
                 if (client_fifo_fd != -1) close(client_fifo_fd);
@@ -62,27 +62,28 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    signal(SIGINT, encerra);
+    signal(SIGINT, encerra); // se apertar ctrl+c quero que chame encerra 
 
     // 1. Criar FIFO do Cliente
-    sprintf(client_fifo_name, CLIENT_FIFO_FMT, getpid());
-    if (mkfifo(client_fifo_name, 0777) == -1) {
+    sprintf(client_fifo_name, CLIENT_FIFO_FMT, getpid()); // obtem o id
+    if (mkfifo(client_fifo_name, 0777) == -1) { // cria o FIFO
         perror("mkfifo cliente"); exit(1);
     }
 
     // 2. Abrir FIFOs
-    server_fifo_fd = open(SERVER_FIFO, O_WRONLY);
+    server_fifo_fd = open(SERVER_FIFO, O_WRONLY); // canal para falar
     if (server_fifo_fd == -1) {
         printf("Controlador offline.\n"); unlink(client_fifo_name); exit(1);
     }
-    client_fifo_fd = open(client_fifo_name, O_RDWR); // RDWR evita EOF
+    client_fifo_fd = open(client_fifo_name, O_RDWR); // RDWR evita EOF - canal para ouvir privado
 
     // 3. Enviar Login
-    memset(&pedido, 0, sizeof(pedido));
+    memset(&pedido, 0, sizeof(pedido)); // preenche com 0 inicialmente
+    //preencher dados
     pedido.tipo = MSG_LOGIN;
     pedido.pid_cliente = getpid();
     strncpy(pedido.dados, argv[1], sizeof(pedido.dados)-1);
-    write(server_fifo_fd, &pedido, sizeof(pedido));
+    write(server_fifo_fd, &pedido, sizeof(pedido)); // cliente apresenta-se ao servidor 
 
     // 4. ESPERA BLOQUEANTE PELA RESPOSTA DO LOGIN
     RespostaServidor resp;
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
     printf("Login: %s\n", resp.mensagem);
 
     // 5. Se passou, lança thread e mostra menu
-    pthread_create(&t_escuta, NULL, escutaServidor, NULL);
+    pthread_create(&t_escuta, NULL, escutaServidor, NULL); //  lanca thread para ficar a ouvir em segundo plano
 
     // APRESENTAÇÃO INICIAL
     printf("\nBem-vindo ao serviço de Táxis!\n");
@@ -115,8 +116,8 @@ int main(int argc, char *argv[]) {
         else if (strncmp(linha, "agendar", 7) == 0) {
             pedido.tipo = MSG_PEDIDO_VIAGEM;
             pedido.pid_cliente = getpid();
-            strncpy(pedido.dados, linha + 8, sizeof(pedido.dados)-1);
-            write(server_fifo_fd, &pedido, sizeof(pedido));
+            strncpy(pedido.dados, linha + 8, sizeof(pedido.dados)-1); // +8 salta a palavra agendar e envia resto em dados
+            write(server_fifo_fd, &pedido, sizeof(pedido)); // enviar estrutura ao servidor 
         }
         else if (strncmp(linha, "cancelar", 8) == 0) {
             int id;
@@ -126,7 +127,7 @@ int main(int argc, char *argv[]) {
                 sprintf(pedido.dados, "%d", id); // Envia o ID como texto
                 write(server_fifo_fd, &pedido, sizeof(pedido));
             } else {
-                printf("Erro: 'cancelar <ID>'\nCMD> ");
+                printf("Erro: 'cancelar <ID>'\n ");
             }
         }
         else if (strcmp(linha, "consultar") == 0) {
