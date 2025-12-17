@@ -262,7 +262,7 @@ void lancaVeiculo(ControladorData *dados, int idx) {
         //criacao da thread dinamica 
         pthread_t t;
         ArgsTelemetria *args = malloc(sizeof(ArgsTelemetria)); // alocamos memoria para os args 
-        args->fd = pfd[0]; args->index_viagem = idx; args->dados = dados; /
+        args->fd = pfd[0]; args->index_viagem = idx; args->dados = dados;
         pthread_create(&t, NULL, trataVeiculo, args);
         pthread_detach(t); // utilizamos detach para o taxi correr de fundo e depois morrer automaticamente 
     }
@@ -274,7 +274,7 @@ void *trataRelogio(void *arg) {
     while(dados->continua) { // quando o admin escreve termina, continua=0, thread termina suavemente 
         sleep(1);
         pthread_mutex_lock(&dados->mutex); //trancamos mutex
-        dados->tempo_sistema++; /  incrementamos instante 
+        dados->tempo_sistema++; //  incrementamos instante 
         for(int i=0; i<dados->num_viagens; i++) {
             if(dados->viagens[i].status == 0 && dados->viagens[i].hora_inicio <= dados->tempo_sistema) { // verificacao na lista de viagens 
                 if (dados->veiculos_ativos < dados->max_veiculos) { // verificacao maximo de veiculos 
@@ -363,7 +363,7 @@ int main() {
     unlink(SERVER_FIFO); mkfifo(SERVER_FIFO, 0777);
     dados.servidor_fifo_fd = open(SERVER_FIFO, O_RDWR); // abrimos pipe RDWR para nao terminar sem clientes
 
-    // aqui criamos as proxs threads e o processo deixaa de ser single-thread e passa a ter 3 fluxos de execucao em paralelo
+    // aqui criamos as proxs threads e o processo deixa de ser single-thread e passa a ter 3 fluxos de execucao em paralelo
     pthread_create(&t_cli, NULL, trataClientes, &dados);
     pthread_create(&t_rel, NULL, trataRelogio, &dados);
 
@@ -373,7 +373,7 @@ int main() {
     while(dados.continua) {
         //printf("Inicio > ");
         if(!fgets(cmd, sizeof(cmd), stdin)) break;
-        cmd[strcspn(cmd, "\n")] = 0;
+        cmd[strcspn(cmd, "\n")] = 0; // tirar \n do fgets
 
         // Comandos ADMIN
         if(strcmp(cmd, "terminar") == 0) {
@@ -383,11 +383,11 @@ int main() {
             // A. Cancelar Viagens (Agendadas e Ativas)
             int existem_ativos = 0;
             for(int i=0; i < dados.num_viagens; i++) {
-                if(dados.viagens[i].status == 1) { 
+                if(dados.viagens[i].status == 1) { // taxis que estao na estrada
                     kill(dados.viagens[i].pid_veiculo, SIGUSR1); // Manda parar veículo
                     existem_ativos++;
                 }
-                else if(dados.viagens[i].status == 0) {
+                else if(dados.viagens[i].status == 0) { // taxis agendados
                     dados.viagens[i].status = -1; // Cancela agendamento
                     // Avisar cliente que a viagem foi cancelada
                     enviaResposta(dados.viagens[i].pid_cliente, MSG_RESPOSTA_SERVIDOR, 
