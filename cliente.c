@@ -6,10 +6,10 @@ int client_fifo_fd = -1;
 int continua = 1;
 
 // Tratamento de Sinais
-void encerra(int s) {
+void encerra(int s) { // s - numero do sinal \ SIGINT = 2
     if (server_fifo_fd != -1) close(server_fifo_fd);
     if (client_fifo_fd != -1) close(client_fifo_fd);
-    unlink(client_fifo_name); 
+    unlink(client_fifo_name); // remove o FIFO do disco
     exit(0);
 }
 
@@ -19,13 +19,13 @@ void *escutaServidor(void *arg) {
     int n;
 
     while (continua) {
-        n = read(client_fifo_fd, &resp, sizeof(RespostaServidor));
+        n = read(client_fifo_fd, &resp, sizeof(RespostaServidor)); // threaad fica parada aqui a espera que o controlador ou veiculo escreva algo no pipe privado
         
         // Se recebeu dados válidos
         if (n == sizeof(RespostaServidor)) {
             printf("%s\n", resp.mensagem);
-            fflush(stdout);
-            if (strstr(resp.mensagem, "SHUTDOWN") != NULL) {
+            fflush(stdout); // forcar printf a aparecer no ecra 
+            if (strstr(resp.mensagem, "SHUTDOWN") != NULL) { // 
                 printf("Ordem de encerramento recebida.\n");
                 if (server_fifo_fd != -1) close(server_fifo_fd);
                 if (client_fifo_fd != -1) close(client_fifo_fd);
