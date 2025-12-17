@@ -1,6 +1,6 @@
 # 🚖 Simulação de Gestão de Frota de Táxis Autónomos
 
-Este projeto consiste na simulação de uma plataforma de gestão de táxis autónomos, desenvolvida em **Linguagem C** para ambiente **Linux/UNIX**. [cite_start]O trabalho foi realizado no âmbito da unidade curricular de **Sistemas Operativos** (2025/2026) do [ISEC - Instituto Superior de Engenharia de Coimbra](https://www.isec.pt).
+Este projeto consiste na simulação de uma plataforma de gestão de táxis autónomos, desenvolvida em **Linguagem C** para ambiente **Linux/UNIX**. O trabalho foi realizado no âmbito da unidade curricular de **Sistemas Operativos** (2025/2026) do [ISEC - Instituto Superior de Engenharia de Coimbra](https://www.isec.pt).
 
 ## 📋 Sobre o Projeto
 
