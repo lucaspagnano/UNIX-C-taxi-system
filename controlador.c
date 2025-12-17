@@ -38,12 +38,12 @@ typedef struct {
 
 
 void enviaResposta(pid_t pid_cliente, TipoMsg tipo, const char *msg, int sucesso) {
-    char cliente_fifo[50];
-    RespostaServidor resp;
-    sprintf(cliente_fifo, CLIENT_FIFO_FMT, pid_cliente);
-    memset(&resp, 0, sizeof(resp));
-    resp.tipo = tipo;
-    resp.sucesso = sucesso;
+    char cliente_fifo[50]; // caminho do ficheiro
+    RespostaServidor resp; // estrutura que vamos enviar
+    sprintf(cliente_fifo, CLIENT_FIFO_FMT, pid_cliente); // usamos formato definido em common.h e subs %d por PID
+    memset(&resp, 0, sizeof(resp)); // preenche inicialmente tudo a 0
+    resp.tipo = tipo; 
+    resp.sucesso = sucesso; 
     strncpy(resp.mensagem, msg, sizeof(resp.mensagem) - 1);
     
     int fd = open(cliente_fifo, O_WRONLY);
