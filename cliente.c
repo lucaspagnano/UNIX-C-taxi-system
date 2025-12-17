@@ -19,7 +19,7 @@ void *escutaServidor(void *arg) {
     int n;
 
     while (continua) {
-        n = read(client_fifo_fd, &resp, sizeof(RespostaServidor)); // threaad fica parada aqui a espera que o controlador ou veiculo escreva algo no pipe privado
+        n = read(client_fifo_fd, &resp, sizeof(RespostaServidor)); // thread fica parada aqui a espera que o controlador ou veiculo escreva algo no pipe privado
         
         // Se recebeu dados válidos
         if (n == sizeof(RespostaServidor)) {
