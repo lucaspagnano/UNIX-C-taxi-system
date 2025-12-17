@@ -184,7 +184,7 @@ void processaCancelamentoCliente(ControladorData *dados, PedidoCliente *p) {
 }
 
 // Thread Leitura Telemetria
-void *trataVeiculo(void *arg) { // fica colada no pipe anonimo a ler tudo que o veiculo escreve no ecrae transformando em dados na estrutura viagens
+void *trataVeiculo(void *arg) { // fica colada no pipe anonimo a ler tudo que o veiculo escreve no ecra e vai transformando em dados na estrutura viagens
     ArgsTelemetria *args = (ArgsTelemetria *)arg; // convertemos void para estrutura ArgsTelemetria
     char buf[256]; 
     int perc;
