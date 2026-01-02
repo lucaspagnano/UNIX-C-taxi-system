@@ -38,7 +38,6 @@ A ordem de execução é estrita: o **Controlador** deve estar em funcionamento 
 O sistema assume o valor padrão (10 veículos).
 
 ```bash
-# Opção A: Execução padrão
 ./controlador
 ```
 ### 2. Iniciar Clientes
